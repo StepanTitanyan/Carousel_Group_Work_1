@@ -1,0 +1,937 @@
+---
+title: "Introduction to Git"
+subtitle: "Installation, Basic Commands"
+categories: [git, GitHub]
+image_path: "../img/git"
+---
+
+
+## Installation and Configuration
+
+### Installation
+
+- **macOS:** Install Xcode Command Line Tools. Open Terminal and run:
+
+```bash
+xcode-select --install
+```
+
+<!-- TODO: screenshot - macOS prompt to install Xcode Command Line Tools -->
+
+- **Linux:** Git may already be installed. If not, install it using:
+
+```bash
+sudo apt install git
+```
+
+<!-- TODO: screenshot - Linux apt install git terminal output -->
+
+- **Windows:** Download Git for Windows from  
+  [https://git-scm.com/download/win](https://git-scm.com/download/win) and install it with default settings.
+
+<!-- TODO: screenshot - Git for Windows installer -->
+
+To verify that Git is installed, run:
+
+```bash
+git --version
+```
+
+<!-- TODO: screenshot - git version terminal output -->
+
+---
+
+## Sign Up for GitHub
+
+**Follow these steps to create a GitHub account:**
+
+1. Open the GitHub website:  
+   https://github.com/
+
+<!-- TODO: screenshot - GitHub landing page -->
+
+2. Click **Sign up** in the top-right corner.
+   <!-- TODO: screenshot - GitHub sign up button -->
+
+3. Enter your:
+   - Email address  
+   - Password  
+   - Username  
+
+<!-- TODO: screenshot - GitHub registration form -->
+
+4. Choose your email verification preferences.
+
+5. Complete the verification challenge.
+   <!-- TODO: screenshot - GitHub puzzle/captcha -->
+
+6. Click **Create account**.
+
+7. GitHub will send a verification code to your email. Enter the code to activate your account.
+   <!-- TODO: screenshot - email verification field -->
+
+8. Choose the **Free** plan (sufficient for this course).
+
+After this, your GitHub account is fully ready.
+
+---
+
+## Git Configuration
+
+### Check Current Git Config
+
+Run the following command to see your current configuration (should be mostly empty on new installations):
+
+```bash
+git config --global --list
+```
+
+<!-- TODO: screenshot - empty git config list -->
+
+### Set Username
+
+```bash
+git config --global user.name "your_name"
+```
+
+<!-- TODO: screenshot - setting git username -->
+
+### Set Email
+
+```bash
+git config --global user.email "your_email"
+```
+
+<!-- TODO: screenshot - setting git email -->
+
+### Verify Updated Config
+
+Check again:
+
+```bash
+git config --global --list
+```
+
+<!-- TODO: screenshot - username and email now appear -->
+
+---
+
+## Generate Personal Access Token (PAT)
+
+GitHub no longer accepts passwords for Git operations.  
+You must generate a **Personal Access Token (PAT)**.
+
+### Steps
+
+1. Sign in to your GitHub account.
+
+2. Navigate to:  
+   **Profile → Settings → Developer settings → Personal access tokens → Tokens (classic)**
+
+<!-- TODO: screenshot - GitHub settings navigation -->
+
+3. Click **Generate new token**.
+   <!-- TODO: screenshot - generate new token button -->
+
+4. Select scopes (minimum recommended):
+   - `repo`
+   - `read:org`
+   - `workflow`
+   - or simply select **all**
+
+<!-- TODO: screenshot - PAT scopes selection -->
+
+5. Set **No expiration**.
+
+<!-- TODO: screenshot - PAT expiration options -->
+
+6. Click **Generate token**.
+
+7. Copy the token and store it securely.
+
+<!-- TODO: screenshot - generated PAT -->
+
+You will paste this token when executing:
+
+```bash
+git push
+```
+
+---
+
+## Generate SSH Key (Optional but Recommended)
+
+SSH keys allow secure password-less authentication with GitHub.
+
+### Steps
+
+1. Open Terminal or PowerShell.
+
+2. Generate a new SSH key:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+```
+
+<!-- TODO: screenshot - ssh-keygen running -->
+
+3. When prompted for a location, press ENTER to use the default:
+
+```
+~/.ssh/id_rsa
+```
+
+<!-- TODO: screenshot - ssh key default path -->
+
+4. When asked for a passphrase:
+   - leave empty for no passphrase  
+   - or enter a secure passphrase  
+
+5. Display your public key:
+
+```bash
+cat ~/.ssh/id_rsa.pub
+```
+
+<!-- TODO: screenshot - public key output -->
+
+### Copy SSH Key
+
+macOS:
+
+```bash
+pbcopy < ~/.ssh/id_rsa.pub
+```
+
+Windows PowerShell:
+
+```bash
+Get-Content ~/.ssh/id_rsa.pub | Set-Clipboard
+```
+
+<!-- TODO: screenshot - copying key to clipboard -->
+
+### Add SSH Key to GitHub
+
+1. Go to **GitHub → Settings → SSH and GPG keys**
+2. Click **New SSH key**
+3. Paste your key
+4. Save
+
+<!-- TODO: screenshot - GitHub SSH key page -->
+
+---
+
+### Create a Remote Repository on GitHub
+
+1. Log in to your GitHub account.
+2. Click the **New** repository button.
+   <!-- TODO: screenshot - GitHub "New repository" button -->
+3. Fill in:
+   - Repository name  
+   - Description (optional)  
+   - Set it to **Public**
+4. Do **NOT** initialize with README (we will create files locally).
+   <!-- TODO: screenshot - repository creation form -->
+5. Click **Create repository**.
+
+GitHub will show you the **remote URL**, e.g.:
+
+```bash
+https://github.com/username/myrepo.git
+```
+
+<!-- TODO: screenshot - newly created empty repo page with remote URL -->
+
+1. Choose a folder on your computer.
+2. Initialize Git in that folder:
+
+```bash
+git init
+```
+
+<!-- TODO: screenshot - git init output -->
+
+3. Connect your local repo to the remote repo:
+
+```bash
+git remote add origin https://github.com/username/myrepo.git
+```
+
+<!-- TODO: screenshot - successful git remote add -->
+
+4. Verify remote:
+
+```bash
+git remote -v
+```
+
+<!-- TODO: screenshot - list of remotes -->
+
+---
+
+## Adding a Dummy File
+
+Inside your local project folder, create a simple file:
+
+```bash
+echo "This is a test file" > test.txt
+```
+
+<!-- TODO: screenshot - test.txt created in file explorer -->
+
+Then stage it:
+
+```bash
+git add test.txt
+```
+
+Commit it:
+
+```bash
+git commit -m "Add test file"
+```
+
+<!-- TODO: screenshot - git add and git commit output -->
+
+---
+
+## Pushing to GitHub
+
+Push your commit to GitHub:
+
+```bash
+git push -u origin main
+```
+
+If your default branch is **master**, use:
+
+```bash
+git push -u origin master
+```
+
+<!-- TODO: screenshot - first push showing authentication -->
+
+You will be asked for:
+
+- username  
+- **Personal Access Token** (instead of password)
+
+After authentication, your file will appear on GitHub.
+
+<!-- TODO: screenshot - repo page showing test.txt -->
+
+---
+
+## Pulling Changes from GitHub
+
+If changes have been made remotely, you can update your local repo:
+
+```bash
+git pull origin main
+```
+
+or:
+
+```bash
+git pull
+```
+
+<!-- TODO: screenshot - git pull showing new changes -->
+
+Use pull whenever you want your local files to match GitHub.
+
+---
+
+## Cloning a Repository (Alternative Workflow)
+
+Instead of creating a folder manually, you can clone an existing remote repo:
+
+```bash
+git clone https://github.com/username/myrepo.git
+```
+
+This will:
+
+- Create the folder  
+- Download all existing files  
+- Set the remote origin automatically  
+
+<!-- TODO: screenshot - git clone output -->
+
+---
+
+## Summary Workflow
+
+1. Create repo on GitHub (empty, no README)  
+2. `git init` locally  
+3. Create files  
+4. `git add`  
+5. `git commit`  
+6. `git remote add origin <url>`  
+7. `git push`  
+
+or use:
+
+- `git clone` → edit → `git add` → `git commit` → `git push`
+
+<!-- TODO: screenshot - full workflow diagram (optional) -->
+
+
+## Homework
+
+This task ensures that you can create repositories, work locally, work remotely, and synchronize changes between GitHub and your machine.
+
+Follow the steps below **exactly in order**.
+
+---
+
+### Create a Remote Repository on GitHub
+
+1. Log in to your GitHub account.
+2. Click **New Repository**.
+3. Set:
+   - Repository name: `choose any name  
+   - Visibility: **Public**
+4. Do **NOT** initialize with README.
+5. Click **Create Repository**.
+
+<!-- TODO: screenshot - GitHub new repo page -->
+
+Copy your remote URL, e.g.:
+
+```
+https://github.com/yourusername/myrepo.git
+```
+
+---
+
+### Clone the Repository to Your Computer
+
+In a folder of your choice, open Terminal or PowerShell and run:
+
+```bash
+git clone https://github.com/yourusername/myrepo.git
+```
+
+This will create a new local folder with the repository inside.
+
+<!-- TODO: screenshot - git clone output -->
+
+---
+
+### Create a Dummy File Locally
+
+Navigate into the cloned folder:
+
+```bash
+cd myrepo
+```
+
+Create a simple text file:
+
+```bash
+echo "This is my first Git test file." > test.txt
+```
+
+Stage and commit the file:
+
+```bash
+git add test.txt
+git commit -m "Add test file"
+```
+
+Push it to GitHub:
+
+```bash
+git push
+```
+
+<!-- TODO: screenshot - git push output -->
+
+Check GitHub — you should now see `test.txt` in the repository.
+
+
+### Add a New File on GitHub (Remote)
+
+1. Open your repo on GitHub.
+2. Click **Add file → Create new file**.
+3. Name it: `remote_file.txt`
+4. Add any text inside it.
+5. Commit the new file.
+
+
+### Pull the New File to Your Computer
+
+Return to your local repo folder and run:
+
+```bash
+git pull #given the strategy either --rebase or merge
+```
+
+
+## Branching Strategy for the Group Project
+
+For this project, the team **must not work directly on `master`**.
+
+The repository should follow a simple branch hierarchy where work flows from `lower-level` dependencies to `higher-level` application layers.
+
+### Branch Hierarchy
+
+**The branch structure should be:**
+
+- `master`
+- `db`
+- `backend`
+- `frontend`
+- `ds`
+
+### Recommended Dependency Logic
+
+**The idea behind this structure is:**
+
+- `master` is the protected stable branch
+- `db` comes first because the database schema is the foundation
+- `backend` depends on the database design
+- `frontend` depends on the backend API
+- `datascience` can work in parallel, but its outputs will later be integrated into the backend and product
+
+### Visual Branch Structure
+
+```{mermaid}
+gitGraph
+    commit id: "initial"
+    branch db
+    checkout db
+    commit id: "db setup"
+    branch backend
+    checkout backend
+    commit id: "backend api"
+    branch frontend
+    checkout frontend
+    commit id: "frontend ui"
+    checkout main
+    branch datascience
+    checkout datascience
+    commit id: "eda + model"
+```
+
+### What Each Branch Is For
+
+#### `master` owned by PM
+
+This is the **main protected branch**.
+
+- It should always contain the most stable version of the project
+- Students should not push directly to `master`
+- Only reviewed and approved work should reach this branch
+
+### `db` owned by Database Developer
+
+This branch is for database-related work.
+
+- PostgreSQL schema
+- table creation
+- SQL scripts
+- seed data
+- connection setup
+
+### `backend` owned by Backend Developer
+
+This branch is for backend development that builds on top of the database branch.
+
+- FastAPI routes
+- business logic
+- integration with PostgreSQL
+- request/response schemas
+- API documentation
+
+### `frontend` owned by Fronten Developer
+
+This branch is for frontend development that depends on the backend.
+
+- Streamlit pages
+- forms
+- dashboards
+- visualizations
+- API consumption from FastAPI
+
+### `datascience` owned by Data Scientist
+
+This branch is for analytical and model-related work.
+
+- exploratory data analysis
+- feature engineering
+- Bayesian logic
+- notebook experiments
+- model packaging for backend integration
+
+## Team Workflow
+
+Each student should work in a branch related to their role.
+
+**A clean workflow is:**
+
+- **DB developer** works from `db`
+- **Backend developer** works from `backend`
+- **Frontend developer** works from `frontend`
+- **Data scientist / analyst** works from `datascience`
+- **Product manager** reviews work, manages pull requests, and merges approved changes
+
+### Important Rule
+
+::: {.callout-important title="Team Rule"}
+
+All students must create **Pull Requests** for their changes and wait for the **Product Manager** to review and merge them.
+
+Students should **not merge their own work directly** into shared branches.
+
+:::
+
+## Step-by-Step Branch Workflow
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-org/your-repo.git
+cd your-repo
+```
+
+### 2. Pull the latest version of `master`
+
+```bash
+git checkout master
+git pull origin master
+```
+
+### 3. Create the main role branches once
+
+These branches are usually created once and then reused (you are free to delete it and create new one after the feedback).
+
+```bash
+git checkout -b db
+git push -u origin db
+
+git checkout master
+git checkout -b datascience
+git push -u origin datascience
+
+git checkout db
+git checkout -b backend
+git push -u origin backend
+
+git checkout backend
+git checkout -b frontend
+git push -u origin frontend
+```
+
+### Recommended Daily Workflow for Each Student
+
+#### Database Developer
+
+**The DB developer should work on `db`.**
+
+```bash
+git checkout db
+git pull origin db
+```
+
+**After making changes:**
+
+```bash
+git add .
+git commit -m "Add database schema"
+git push origin db
+```
+
+Then open a Pull Request to merge the work into the target shared branch when instructed by the Product Manager.
+
+#### Backend Developer
+
+The backend developer should work on `backend`.
+
+
+::: {.callout-important}
+
+**Before starting work:**
+
+```bash
+git checkout backend
+git pull origin backend
+```
+:::
+
+**After changes:**
+
+```bash
+git add .
+git commit -m "Add FastAPI endpoints"
+git push origin backend
+```
+
+#### Frontend Developer
+
+The frontend developer should work on `frontend`.
+
+**Before starting work:**
+
+```bash
+git checkout frontend
+git pull origin frontend
+```
+
+**After changes:**
+
+```bash
+git add .
+git commit -m "Update Streamlit interface"
+git push origin frontend
+```
+
+#### Data Scientist / Analyst
+
+The data scientist should work on `ds`.
+
+Before starting work:
+
+```bash
+git checkout ds
+git pull origin ds
+```
+
+After changes:
+
+```bash
+git add .
+git commit -m "Add notebook and model logic"
+git push origin ds
+```
+
+## Feature Branches Under Each Role Branch
+
+For cleaner collaboration, each student can create small feature branches from their team branch.
+
+**Examples:**
+
+- `db/schema-v1`
+- `backend/api-carousel`
+- `frontend/analytics-page`
+- `datascience/beta-bernoulli-model`
+
+**Example for backend:**
+
+```bash
+git checkout backend
+git pull origin backend
+git checkout -b backend/api-carousel
+```
+
+**After work:**
+
+```bash
+git add .
+git commit -m "Implement carousel endpoints"
+git push -u origin backend/api-carousel
+```
+
+**Then open a Pull Request:**
+
+- from `backend/api-carousel`
+- into `backend`
+
+This is safer than everyone committing directly to the same shared branch.
+
+
+## Pull Requests
+
+A **Pull Request (PR)** is a GitHub feature used to propose changes from one branch into another branch.
+
+>It is the main collaboration mechanism for this project.
+
+### Why Pull Requests matter
+
+**Pull Requests help the team:**
+
+- review code before merging
+- discuss implementation choices
+- catch bugs early
+- prevent accidental overwrites
+- keep `master` stable
+
+### Example Pull Request Flow
+
+```{mermaid}
+gitGraph
+    commit id: "master"
+    branch db
+    checkout db
+    commit id: "schema"
+    branch backend
+    checkout backend
+    commit id: "api"
+    branch backend/api-carousel
+    checkout backend/api-carousel
+    commit id: "feature work"
+    checkout backend
+    merge backend/api-carousel id: "PR merged"
+```
+
+### Pull Request Steps on GitHub
+
+**After pushing your branch:**
+
+- open the repository on GitHub
+- click **Compare & pull request**
+- set the correct **base branch**
+- set your **compare branch**
+- add a clear title
+- write a short description of what changed
+- request review if needed
+- wait for the Product Manager to review and merge
+
+### Example PR directions
+
+**Use PRs like this:**
+
+- `db/feature-name` → `db`
+- `backend/feature-name` → `backend`
+- `frontend/feature-name` → `frontend`
+- `datascience/feature-name` → `datascience`
+
+**Then, after validation, the Product Manager can merge upward:**
+
+- `db` → `master`
+- `backend` → `master` or after syncing dependency branches
+- `frontend` → `master`
+- `datascience` → `master`
+
+**If the team wants strict dependency flow, the Product Manager can also merge in this order:**
+
+- `db` into `master`
+- `backend` after DB changes are stable
+- `frontend` after backend changes are stable
+- `datascience` when model outputs are ready for integration
+
+## Merge Conflicts
+
+A **merge conflict** happens when Git cannot automatically combine changes from two branches.
+
+
+::: {.callout-important}
+
+**This usually happens when:**
+
+- two people edit the same file
+- two people edit the same lines in a file
+- one person deletes something that another person modified
+
+:::
+
+
+### Example Conflict Situation
+
+**Suppose:**
+
+- Developer A edits `bandit_utils.py`
+- Developer B also edits the same part of `bandit_utils.py`
+
+When one branch is merged first, the second branch may conflict.
+
+```{mermaid}
+gitGraph
+    commit id: "base"
+    
+    branch backend
+    checkout backend
+    commit id: "change A"
+    
+    checkout main
+    branch datascience
+    checkout datascience
+    commit id: "change B"
+```
+
+### What a conflict looks like
+
+**Git may mark the file like this:**
+
+```python
+<<<<<<< HEAD
+return {"message": "Backend version"}
+=======
+return {"message": "Data science version"}
+>>>>>>> feature-branch
+```
+
+>This means Git needs a human to decide which version to keep.
+
+### How to resolve a merge conflict
+
+1. Pull the latest changes from the target branch.
+2. Open the conflicted file.
+3. Find the conflict markers:
+   - `<<<<<<<`
+   - `=======`
+   - `>>>>>>>`
+4. Decide which code should remain.
+5. Remove the conflict markers.
+6. Save the file.
+7. Stage and commit the resolved version.
+
+**Example:**
+
+```bash
+git add .
+git commit -m "Resolve merge conflict"
+git push
+```
+
+### Best ways to avoid conflicts
+
+**To reduce merge conflicts:**
+
+- pull frequently
+- keep branches focused and small
+- do not let branches drift for too long
+- communicate who is editing which files
+- use Pull Requests early
+- avoid editing the same file in parallel unless necessary
+
+## Suggested Merge Responsibility
+
+The Product Manager should be responsible for coordinating merges.
+
+That means:
+
+- checking whether the branch is ready
+- reviewing the Pull Request
+- confirming no major conflicts remain
+- merging into the correct shared branch
+- making sure `master` stays stable
+
+## Recommended Team Process
+
+A practical process for the group is:
+
+1. The student pulls the latest version of the correct parent branch
+2. The student creates or updates a feature branch
+3. The student makes changes locally
+4. The student commits and pushes the branch
+5. The student opens a Pull Request
+6. The Product Manager reviews the PR
+7. The Product Manager merges the PR
+8. Other students pull the updated shared branch before continuing
+
+## Full Workflow Diagram
+
+```{mermaid}
+flowchart TD
+    A[Student pulls latest branch] --> B[Create feature branch]
+    B --> C[Develop locally]
+    C --> D[git add / commit / push]
+    D --> E[Open Pull Request]
+    E --> F[Product Manager reviews]
+    F --> G[Merge approved changes]
+    G --> H[Team pulls latest updates]
+```
+

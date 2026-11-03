@@ -1,0 +1,10 @@
+Metadata-Version: 2.4
+Name: front
+Version: 0.1.0
+Summary: Streamlit frontend for the DS223 group project
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=2.0.0
+Requires-Dist: pandas>=3.0.2
+Requires-Dist: scipy>=1.17.1
+Requires-Dist: streamlit>=1.56.0

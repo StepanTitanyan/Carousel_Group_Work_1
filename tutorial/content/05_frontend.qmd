@@ -1,0 +1,448 @@
+---
+title: "Intro to Streamlit"
+subtitle: "Prototype"
+categories: [Docker, Python, Streamlit, Frontend]
+image_path: "../img/frontend"
+---
+
+## Streamlit Frontend
+
+The frontend of the project is built with **Streamlit** and organized as a **multi-page application**.
+
+Its role is to provide the user interface for:
+
+- creating carousel projects,
+- interacting with the carousel bandits,
+- and analyzing the results visually.
+
+The current version is an **MVP prototype**, which already demonstrates the main product flow. Later, this frontend will be connected to a backend API and a PostgreSQL database.
+
+[Live App](https://carousel-mvp.streamlit.app)
+
+---
+
+## File Structure
+
+**The frontend is organized as follows:**
+
+```bash
+app/front/
+├── main.py
+├── bandit_utils.py
+├── Dockerfile
+├── pyproject.toml
+├── README.md
+├── uv.lock
+└── pages/
+    ├── 1_Create_Carousels.py
+    ├── 2_Interaction.py
+    └── 3_Analytics.py
+```
+
+This structure keeps the code modular and easier to maintain.
+
+**The idea is simple:**
+
+- `main.py` is the Streamlit entry point
+- `pages/` stores each page of the app
+- `bandit_utils.py` stores shared logic used across pages
+- the remaining files support environment, packaging, and deployment
+
+```{mermaid}
+flowchart TD
+    A[main.py] --> B[pages/1_Create_Carousels.py]
+    A --> C[pages/2_Interaction.py]
+    A --> D[pages/3_Analytics.py]
+    B --> E[bandit_utils.py]
+    C --> E
+    D --> E
+```
+
+---
+
+## Explanation of Each File
+
+### `main.py`
+
+This is the main entry point of the Streamlit app.
+
+**Its job is to:**
+
+- start the application,
+- define the landing page,
+- and let Streamlit automatically discover the files inside the `pages/` folder.
+
+In Streamlit, once the `pages/` folder exists, each file inside it becomes a separate page in the application.
+
+### `bandit_utils.py`
+
+This file contains the reusable logic shared across all pages.
+
+**It is responsible for operations such as:**
+
+- initializing app state,
+- creating carousel objects,
+- sampling visible alternatives,
+- retrieving carousel statistics,
+- updating rewards after feedback,
+- building summary tables,
+- selecting the active carousel,
+- identifying the champion bandit,
+- preparing posterior distribution points for visualization.
+
+This keeps the UI code cleaner because the logic is not repeated inside each page.
+
+### `pages/1_Create_Carousels.py`
+
+This page is responsible for the setup and management of carousel projects.
+
+It allows the user to:
+
+- create a new carousel,
+- define the total number of alternatives,
+- define how many alternatives are visible at each round,
+- list existing carousels,
+- inspect alternatives,
+- reset a selected carousel,
+- and prepare the project for interaction.
+
+### `pages/2_Interaction.py`
+
+This page is the live interaction layer of the product.
+
+It allows the user to:
+
+- choose a carousel,
+- see the visible alternatives,
+- click on one of the shown alternatives,
+- move to the next round with no click,
+- or resample the visible set without updating.
+
+This is the page where the Bayesian bandit behavior becomes interactive.
+
+### `pages/3_Analytics.py`
+
+This page is the reporting and visualization layer.
+
+It shows:
+
+- total impressions,
+- total clicks,
+- average reward,
+- champion bandit,
+- posterior mean comparison,
+- click comparison,
+- Beta posterior distributions,
+- detailed result tables,
+- cumulative reward over time.
+
+This page helps users interpret the results of the carousel experiment.
+
+### Supporting Files
+
+The remaining files are used for project setup and packaging:
+
+- `Dockerfile` — container setup for deployment
+- `pyproject.toml` — project dependencies and metadata
+- `uv.lock` — locked dependency versions when using `uv`
+- `README.md` — project documentation
+
+```Dockerfile
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Copy pyproject.toml
+COPY pyproject.toml .
+
+# Install dependencies
+RUN pip install --no-cache-dir -e .
+
+# Copy app code
+COPY . .
+
+# Expose port
+EXPOSE 8501
+
+# Run the app
+CMD ["streamlit", "run", "main.py", "--server.port", "8501", "--server.address", "0.0.0.0"]
+```
+
+
+
+
+## URLs for the Features
+
+The deployed prototype currently includes the following pages.
+
+### Home / Main App
+
+```text
+https://carousel-mvp.streamlit.app
+```
+
+### Create Carousels Page
+
+```text
+https://carousel-mvp.streamlit.app
+```
+
+This is the page where users define:
+
+- carousel name,
+- number of alternatives,
+- visible count.
+
+### Interaction Page
+
+```text
+https://carousel-mvp.streamlit.app/Interaction
+```
+
+This is the page where the user interacts with the visible bandits and generates click feedback.
+
+### Analytics Page
+
+```text
+https://carousel-mvp.streamlit.app/Analytics
+```
+
+This is the page where the results are summarized and visualized.
+
+---
+
+## Step-by-Step Component Development
+
+The frontend can be understood as being developed in stages.
+
+### Step 1 | Create the basic Streamlit app
+
+The first step is to create a minimal Streamlit application with:
+
+- a `main.py` file,
+- a `pages/` folder,
+- and one test page.
+
+The goal here is simply to make sure the app runs and multi-page navigation works.
+
+### Step 2 | Build the Create Carousels page
+
+The next step is to build the setup page.
+
+This page is important because it defines the core user input:
+
+- project name,
+- total alternatives,
+- visible area size.
+
+This is where the app starts to become a product instead of just a demo.
+
+### Step 3 | Add shared logic in `bandit_utils.py`
+
+Once the first page works, common logic should be moved into `bandit_utils.py`.
+
+This makes the application cleaner because reusable functions such as:
+
+- `init_state`,
+- `create_carousel`,
+- `sample_carousel`,
+- `get_stats_df`,
+- `select_carousel_widget`
+
+can be imported by multiple pages.
+
+### Step 4 | Build the Interaction page
+
+After the carousel creation flow is ready, the next step is to build the live interaction page.
+
+**This page needs to:**
+
+- display the currently selected bandits,
+- show current metrics,
+- record click and no-click events,
+- update posterior values,
+- move the carousel to the next round.
+
+This is the core dynamic component of the frontend.
+
+### Step 5 | Build the Analytics page
+
+Once interactions are recorded, the next step is to add visualization.
+
+The analytics page should begin with simple outputs such as:
+
+- total clicks,
+- total impressions,
+- CTR,
+- posterior mean.
+
+Then it can be extended with richer visuals such as:
+
+- champion bandit highlighting,
+- Beta posterior curves,
+- cumulative reward over time.
+
+### Step 6 | Improve UI and readability
+
+After the basic functionality works, the interface should be improved by:
+
+- using better titles and captions,
+- adding metrics,
+- organizing results with columns,
+- improving button labels,
+- and making the pages more visually clear.
+
+### Step 7 | Add placeholders for future backend integration
+
+Even in the MVP stage, it is useful to think ahead.
+
+For example:
+
+- delete buttons can be placeholders,
+- state management can later move to the backend,
+- page actions can later be replaced with API calls.
+
+This makes the transition to the full product easier.
+
+```{mermaid}
+flowchart LR
+    A[Create Carousels] --> B[Shared Logic]
+    B --> C[Interaction]
+    C --> D[Analytics]
+    D --> E[Backend Integration]
+```
+
+---
+
+## Final MVP Version
+
+The current MVP frontend already demonstrates the complete product flow.
+
+### Page 1 | Create Carousels
+
+This page handles project creation and management.
+
+**Users can:**
+
+- create new carousels,
+- define project settings,
+- browse existing projects,
+- inspect alternatives,
+- reset projects.
+
+![]({{< meta image_path >}}/page_1.png)
+
+### Page 2 | Interaction
+
+This page runs the live bandit loop.
+
+**Users can:**
+
+- see which alternatives are currently visible,
+- click an alternative,
+- skip a round with no click,
+- observe how the metrics change.
+
+![]({{< meta image_path >}}/page_2.png)
+
+### Page 3 | Analytics
+
+This page summarizes the experiment and shows the results visually.
+
+**Users can:**
+
+- identify the current champion bandit,
+- compare posterior means,
+- compare clicks,
+- inspect Beta posterior curves,
+- view reward progression over time.
+
+![]({{< meta image_path >}}/page_3_1.png)
+
+![]({{< meta image_path >}}/page_3_2.png)
+
+
+## Modified `docker-compose.yaml`
+
+At this stage we added also frontend as a service
+
+```yaml
+services:
+  db:
+    container_name: postgresql_db_aua
+    image: postgres:17
+    restart: always
+    ports:
+      - 5432:5432
+    environment: 
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]  # Healthcheck for PostgreSQL
+        interval: 60s
+        timeout: 10s
+        retries: 5
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data #persisting data 
+            
+  pgadmin:  
+    container_name: pgadmin_aua
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    ports:
+      - 5050:80 # for local browser (80 is the default port of the browsed)
+    volumes:
+      - ./pgadmin_data:/var/lib/pgadmin  # Persisting pgAdmin configuration and sessions
+    depends_on: 
+      - db
+
+  etl:
+    container_name: etl
+    build:
+      context: ./etl
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - 3000:3000
+    volumes:
+        - ./etl:/app
+    depends_on: 
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: "exit 0"
+  
+  frontend:
+    container_name: streamlit_frontend
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - 8501:8501
+    env_file:
+      - .env
+    volumes:
+      - ./front:/app
+    # depends_on:
+    #   - backend
+
+```
+
+
+## Later: Connecting the Backend with the Frontend
+
+The current Streamlit app is a frontend-first prototype.
+
+At the moment, the application logic is still local and state is managed inside the Streamlit layer.
+
+Later, the architecture will evolve so that:
+
+- Streamlit becomes the UI layer,
+- FastAPI becomes the backend service,
+- PostgreSQL stores persistent data,
+- and the frontend communicates with the backend using API requests.

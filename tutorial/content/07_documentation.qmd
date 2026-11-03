@@ -1,0 +1,217 @@
+---
+title: "MkDocs and GitHub Actions"
+subtitle: "Interacting with the DB and Web"
+categories: [MkDocs, GitHub Actions, Documentation]
+image_path: "../img/mkdocs"
+---
+
+
+
+
+
+
+## Mkdocs
+
+Mkdocs documents your code and puts it in html format.
+
+### Step 1: Create a Virtual Environment
+
+#### Option 1: Using `venv`
+
+```bash 
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+#### Option 2: Using `conda`
+
+
+```bash  
+conda create -n myenv python=3.x
+conda activate myenv
+```
+#### Option 3: Using `uv` (RECOMMENDED)
+
+
+```bash  
+pip install uv
+uv venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+```
+
+### Step 2: Install mkdocs
+
+**After activating your virtual environment, you can install `mkdocs` and the necessary plugins using pip:**
+
+```bash
+pip install mkdocs-material
+pip install "mkdocstrings[python]"
+pip install pillow cairosvg
+```
+
+### Step 3: File Structure
+
+#### Linux/MacOS
+
+```bash
+mkdir -p .github/workflows &&  touch .github/workflows/ci.yaml 
+```
+
+#### Windows
+
+```bash
+New-Item -ItemType Directory -Force -Path ".github/workflows"; New-Item -ItemType File -Force -Path ".github/workflows/ci.yaml"
+```
+
+#### Create `Docs` folder and respective `.md` files
+
+1. Create `docs` folder
+2. Create respective `.md ` files with proper links
+
+
+::: {.callout-important title ="EXAMPLE: File Structure"}
+
+```bash
+├── .github
+│   └── workflows
+│       └── ci.yaml
+├── docs
+│   ├── index.md
+│   ├── demo.md 
+│   ├── etl.md
+│   ├── api.md
+│   └── app.md
+├── mkdocs.yaml
+```
+
+Example: api.md
+
+```bash
+## API
+
+### Main.py
+
+::: myapp.api.main
+
+### Models.py
+
+::: myapp.api.Database.models
+```
+
+
+:::
+
+
+
+
+
+### Step 4: Create `mkdocs.yaml` and `ci.yaml` files
+
+#### `mkdocs.yaml`
+
+
+```yaml
+site_name: My Docs
+
+nav:
+  - Home: index.md
+  - Demo: demo.md
+  - ETL: etl.md
+  - API: api.md
+  - APP: app.md
+
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+  language: en
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+      primary: teal
+      accent: purple
+    - scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+      primary: teal
+      accent: lime
+
+plugins:
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["."]
+```
+
+
+#### `ci.yaml`
+
+
+```yaml
+name: ci
+
+on:
+  push:
+    branches:
+      - master
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Cache Python packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install MkDocs dependencies
+        run: |
+          pip install --upgrade pip
+          pip install mkdocs-material
+          pip install "mkdocstrings[python]"
+          pip install pillow cairosvg
+      - name: Build MkDocs site
+        run: mkdocs build        
+      - name: Deploy mkdocs
+        run: mkdocs gh-deploy --force
+```
+
+
+### Preview of the documentation
+
+Given that the virtual environment is activated and you are in the **root** directory of your project, you can run the following command to serve the documentation locally:
+
+```bash
+mkdocs serve
+```
+
+
+
+![]({{< meta image_path >}}/mkdocs_main.png)

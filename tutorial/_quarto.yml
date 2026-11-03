@@ -1,0 +1,62 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+    - index.qmd
+    - content/*.qmd
+
+execute:
+  # cache: true
+  freeze: auto
+  warning: false
+  message: false
+
+
+website:
+  title: "DS223 Group Project"
+  favicon: img/auaicon.ico
+  # site-url: https://hovhannisyan91.github.io/aca #TODO
+  sidebar:
+    style: floating
+    collapse-level: 2
+    search: true
+
+  navbar:
+    logo: img/auaicon.ico
+    back-to-top-navigation: true
+    left:
+      # - text: "Home"
+      #   href: index.qmd
+      # - text: "Syllabus"
+      #   href: content/syllabus.qmd
+      - text: "Product"
+        href: content/01_problem_definition.qmd
+      - text: "Docker"
+        href: content/02_docker.qmd
+      - text: "Git"
+        href: content/03_git.qmd
+      - text: "Database | PostgreSQL"
+        href: content/04_database.qmd
+      - text: "Frontend | Streamlit"
+        href: content/05_frontend.qmd
+      - text: "Backend | FastAPI"
+        href: content/06_backend.qmd
+      - text: "Documentation | MKdocs"
+        href: content/07_documentation.qmd
+      
+    right:
+      - icon: github
+        href: https://github.com/hovhannisyan91
+        aria-label: GitHub
+
+format: 
+  html:
+    page-layout: full
+    theme: 
+      light: cosmo
+      dark: cyborg
+    toc: true
+    toc-depth: 3
+    toc-location: right
+    code-fold: false
+    css: styles.css
